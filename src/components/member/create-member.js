@@ -5,9 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { Grid } from '@mui/material';  
 
 
-const BE_API_ROOT = "http://localhost:8000"
-const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+// const BE_API_ROOT = "http://localhost:8000"
+const BE_API_ROOT = "https://web-production-962f9.up.railway.app"
 
+const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+const token = localStorage.getItem('authToken'); 
 
 const CreateMember = () => {
     const [member, setMember] = useState({
@@ -27,9 +29,15 @@ const CreateMember = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+
+        if (!token) {
+            navigate('/');
+            return; // Exit useEffect to prevent further execution
+        }
+
         const fetchHouseNames = async () => {
             try {
-                const token = localStorage.getItem('authToken'); 
+                // const token = localStorage.getItem('authToken'); 
                 const response = await axios.get(BE_API_ROOT+'/api/house-names/', {
                     headers: {
                         Authorization: `Bearer ${token}`,  
@@ -39,13 +47,16 @@ const CreateMember = () => {
                 setHouseNames(response.data); 
             } catch (error) {
                 console.error('Error fetching house names:', error.response.data);
+                if (error.response.status === 401) { // Assuming 401 indicates token is invalid/expired
+                    navigate('/');
+                }
             }
         };
 
 
         const fetchAreaNames = async () => {
             try {
-                const token = localStorage.getItem('authToken'); 
+                // const token = localStorage.getItem('authToken'); 
                 const response = await axios.get(BE_API_ROOT+'/api/areas/', {
                     headers: {
                         Authorization: `Bearer ${token}`,  
@@ -74,7 +85,7 @@ const CreateMember = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('authToken');
+        // const token = localStorage.getItem('authToken');
         console.log("mmeber details to post")
         console.log(member)
         try {
@@ -237,6 +248,16 @@ const CreateMember = () => {
                             Create Member
                         </Button>
                     </Grid>
+
+
+                    <Grid item xs={12}>
+                <Button variant="outlined" color="primary" onClick={() => navigate('/dpnd')} fullWidth>
+                    Add Dependent
+                </Button>
+            </Grid>
+
+
+                    
                 </Grid>
             </form>
         </Box>

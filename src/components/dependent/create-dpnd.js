@@ -4,7 +4,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Grid } from '@mui/material';  // Use this if your version expects this import
 
-const BE_API_ROOT = "http://localhost:8000";
+//const BE_API_ROOT = "http://localhost:8000"; 
+const BE_API_ROOT = "https://web-production-962f9.up.railway.app"
 const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const relationshipChoices = [
     { value: "SPOUSE", label: "Spouse" },
@@ -12,6 +13,7 @@ const relationshipChoices = [
     { value: "DAUGHTER", label: "Daughter" },
     { value: "DAUGHTER_IN_LAW", label: "Daughter-in-law" }
 ];
+const token = localStorage.getItem('authToken'); 
 
 const CreateDependent = () => {
     const [dependent, setDependent] = useState({
@@ -28,9 +30,17 @@ const CreateDependent = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+      // const token = localStorage.getItem('authToken');
+
+      // Check if token is null or expired
+      if (!token) {
+          navigate('/');
+          return; // Exit useEffect to prevent further execution
+      }
+
         const fetchMembers = async () => {
             try {
-                const token = localStorage.getItem('authToken');  // Retrieve the JWT token from local storage
+                // const token = localStorage.getItem('authToken');  // Retrieve the JWT token from local storage
                 const response = await axios.get(BE_API_ROOT + '/api/member/', {
                     headers: {
                         Authorization: `Bearer ${token}`,  // Attach the token in the Authorization header
@@ -39,6 +49,9 @@ const CreateDependent = () => {
                 setMembers(response.data);  // Assuming response.data contains the member data
             } catch (error) {
                 console.error('Error fetching members:', error.response.data);
+                if (error.response.status === 401) { // Assuming 401 indicates token is invalid/expired
+                  navigate('/');
+              }
             }
         };
 
@@ -55,7 +68,8 @@ const CreateDependent = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('authToken');
+        // const token = localStorage.getItem('authToken');
+
         try {
             const response = await axios.post(
                 BE_API_ROOT + '/api/dpnd/',
@@ -199,6 +213,14 @@ const CreateDependent = () => {
                             Add Dependent
                         </Button>
                     </Grid>
+
+                    <Grid item xs={12}>
+                <Button variant="outlined" color="primary" onClick={() => navigate('/member')} fullWidth>
+                    Add Member
+                </Button>
+            </Grid>
+
+
                 </Grid>
             </form>
         </Box>
