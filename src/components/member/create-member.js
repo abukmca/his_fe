@@ -2,41 +2,65 @@ import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Typography, MenuItem } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Grid } from '@mui/material';  // Use this if your version expects this import
+import { Grid } from '@mui/material';  
 
 
 const BE_API_ROOT = "http://localhost:8000"
+const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
 
 const CreateMember = () => {
     const [member, setMember] = useState({
+        register_number: '',
         name: '',
-        phone: '',
+        mobile: '',
         dob: '',
-        house_name: '',
-        dependents: [{ name: '', dob: '', relationship: '' }],
+        father: '',
+        house: '',
+        area: '',
+        blood_group:'',
     });
 
     const [houseNames, setHouseNames] = useState([]);
-
+    const [areaNames, setAreaNames] = useState([]);
+    
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchHouseNames = async () => {
             try {
-                const token = localStorage.getItem('authToken'); // Retrieve the JWT token from local storage
+                const token = localStorage.getItem('authToken'); 
                 const response = await axios.get(BE_API_ROOT+'/api/house-names/', {
                     headers: {
-                        Authorization: `Bearer ${token}`,  // Attach the token in the Authorization header
+                        Authorization: `Bearer ${token}`,  
                     },
                 });
                 console.log(response)
-                setHouseNames(response.data);  // Assuming response.data contains the house names
+                setHouseNames(response.data); 
             } catch (error) {
                 console.error('Error fetching house names:', error.response.data);
             }
         };
+
+
+        const fetchAreaNames = async () => {
+            try {
+                const token = localStorage.getItem('authToken'); 
+                const response = await axios.get(BE_API_ROOT+'/api/areas/', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,  
+                    },
+                });
+                console.log(response)
+                setAreaNames(response.data);  
+            } catch (error) {
+                console.error('Error fetching Area names:', error.response.data);
+            }
+        };
     
         fetchHouseNames();
+        fetchAreaNames();
+        
     }, []);
     
 
@@ -48,38 +72,14 @@ const CreateMember = () => {
         });
     };
 
-    const handleDependentChange = (index, e) => {
-        const { name, value } = e.target;
-        const newDependents = [...member.dependents];
-        newDependents[index][name] = value;
-        setMember({
-            ...member,
-            dependents: newDependents,
-        });
-    };
-
-    const addDependent = () => {
-        setMember({
-            ...member,
-            dependents: [...member.dependents, { name: '', dob: '', relationship: '' }],
-        });
-    };
-
-    const removeDependent = (index) => {
-        const newDependents = member.dependents.filter((_, i) => i !== index);
-        setMember({
-            ...member,
-            dependents: newDependents,
-        });
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('authToken');
-
+        console.log("mmeber details to post")
+        console.log(member)
         try {
             const response = await axios.post(
-                'http://13.60.99.23/api/members/',
+                BE_API_ROOT+'/api/member/',
                 member,
                 {
                     headers: {
@@ -89,7 +89,18 @@ const CreateMember = () => {
             );
 
             console.log('Member created successfully', response.data);
-            navigate('/members');
+            setMember({
+                register_number: '',
+                name: '',
+                mobile: '',
+                dob: '',
+                father: '',
+                house: '',
+                area: '',
+                blood_group:'',
+            });
+    
+            navigate('/member');
         } catch (error) {
             console.error('Error creating member:', error);
         }
@@ -102,6 +113,17 @@ const CreateMember = () => {
             </Typography>
             <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
+                   
+                    <Grid item xs={12}>
+                        <TextField
+                            fullWidth
+                            label="Register Number"
+                            name="register_number"
+                            value={member.register_number}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </Grid>
                     <Grid item xs={12}>
                         <TextField
                             fullWidth
@@ -116,24 +138,38 @@ const CreateMember = () => {
                         <TextField
                             fullWidth
                             label="Phone"
-                            name="phone"
+                            name="mobile"
                             type="tel"
-                            value={member.phone}
+                            value={member.mobile}
                             onChange={handleInputChange}
                             required
                         />
                     </Grid>
+                  
+
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Date of Birth"
+                        name="dob"
+                        type="date"
+                        value={member.dob}
+                        onChange={handleInputChange}
+                        InputLabelProps={{
+                            shrink: true,
+                         }}
+                        required
+                        />
+                    </Grid>
+
                     <Grid item xs={12}>
                         <TextField
                             fullWidth
-                            label="Date of Birth"
-                            name="dob"
-                            type="date"
-                            value={member.dob}
+                            label="Father Name"
+                            name="father"
+                            value={member.father}
                             onChange={handleInputChange}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
                             required
                         />
                     </Grid>
@@ -144,8 +180,8 @@ const CreateMember = () => {
                             select
                             fullWidth
                             label="House Name"
-                            name="house_name"
-                            value={member.house_name}
+                            name="house"
+                            value={member.house}
                             onChange={handleInputChange}
                             required
                         >
@@ -157,67 +193,43 @@ const CreateMember = () => {
                         </TextField>
                     </Grid>
 
-                    <Typography variant="h5" mt={3} mb={2}>
-                        Dependents
-                    </Typography>
+                    {/* Area Select Field */}
+                    <Grid item xs={12}>
+                        <TextField
+                            select
+                            fullWidth
+                            label="Area"
+                            name="area"
+                            value={member.area}
+                            onChange={handleInputChange}
+                            required
+                        >
+                            {areaNames.map((area) => (
+                                <MenuItem key={area.id} value={area.id}>
+                                    {area.name}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    </Grid>
 
-                    {member.dependents.map((dependent, index) => (
-                        <Box key={index} sx={{ mb: 2 }}>
-                            <Typography variant="h6" gutterBottom>
-                                Dependent {index + 1}
-                            </Typography>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        fullWidth
-                                        label="Name"
-                                        name="name"
-                                        value={dependent.name}
-                                        onChange={(e) => handleDependentChange(index, e)}
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        fullWidth
-                                        label="Date of Birth"
-                                        name="dob"
-                                        type="date"
-                                        value={dependent.dob}
-                                        onChange={(e) => handleDependentChange(index, e)}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        fullWidth
-                                        label="Relationship"
-                                        name="relationship"
-                                        value={dependent.relationship}
-                                        onChange={(e) => handleDependentChange(index, e)}
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Button
-                                        variant="outlined"
-                                        color="error"
-                                        onClick={() => removeDependent(index)}
-                                    >
-                                        Remove Dependent
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    ))}
 
                     <Grid item xs={12}>
-                        <Button variant="contained" color="primary" onClick={addDependent}>
-                            Add Dependent
-                        </Button>
+                    <TextField
+                        select
+                        fullWidth
+                        label="Blood Group"
+                        name="blood_group"
+                        value={member.blood_group}
+                        onChange={handleInputChange}
+                        
+                        sx={{ mt: 2 }}  
+                    >
+                    {bloodGroups.map((group) => (
+                    <MenuItem key={group} value={group}>
+                    {group}
+                    </MenuItem>
+                     ))}
+                    </TextField>
                     </Grid>
 
                     <Grid item xs={12}>

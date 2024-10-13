@@ -2,6 +2,8 @@ import React from 'react';
 import Login from './Login';
 import Landing from './Landing';
 import CreateMember from './components/member/create-member'
+import CreateDependent  from './components/dependent/create-dpnd'
+
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
@@ -12,6 +14,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/landing" element={<Landing />} />
         <Route path="/member" element={<CreateMember />} />
+        <Route path="/dpnd" element={<CreateDependent />} />
       </Routes>
     </Router>
   );
