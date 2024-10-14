@@ -5,7 +5,9 @@ import CreateMember from './components/member/create-member'
 import CreateDependent  from './components/dependent/create-dpnd'
 
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
+
 
 function App() {
   return (

@@ -10,8 +10,10 @@ const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const relationshipChoices = [
     { value: "SPOUSE", label: "Spouse" },
     { value: "SON", label: "Son" },
-    { value: "DAUGHTER", label: "Daughter" },
-    { value: "DAUGHTER_IN_LAW", label: "Daughter-in-law" }
+    { value: "DAUGHTER_IN_LAW", label: "Daughter-in-law" },
+    { value: "DAUGHTER", label: "Daughter" },  
+    { value: "G-DAUGHTER", label: "G-Daughter" },
+    { value: "G-SON", label: "G-Son" },
 ];
 const token = localStorage.getItem('authToken'); 
 
@@ -33,10 +35,7 @@ const CreateDependent = () => {
       // const token = localStorage.getItem('authToken');
 
       // Check if token is null or expired
-      if (!token) {
-          navigate('/');
-          return; // Exit useEffect to prevent further execution
-      }
+      
 
         const fetchMembers = async () => {
             try {

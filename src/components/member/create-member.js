@@ -30,10 +30,7 @@ const CreateMember = () => {
 
     useEffect(() => {
 
-        if (!token) {
-            navigate('/');
-            return; // Exit useEffect to prevent further execution
-        }
+        
 
         const fetchHouseNames = async () => {
             try {
