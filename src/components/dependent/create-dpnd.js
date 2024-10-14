@@ -116,7 +116,7 @@ const CreateDependent = () => {
                                 });
                             }}
                             renderInput={(params) => (
-                                <TextField {...params} label="Search Member (Parent)" variant="outlined" fullWidth />
+                                <TextField {...params} label="Search Member (Reg No)" variant="outlined" fullWidth />
                             )}
                         />
                     </Grid>
@@ -124,7 +124,7 @@ const CreateDependent = () => {
                     <Grid item xs={12}>
                         <TextField
                             fullWidth
-                            label="Name"
+                            label="Dependent Name"
                             name="name"
                             value={dependent.name}
                             onChange={handleInputChange}
@@ -135,7 +135,7 @@ const CreateDependent = () => {
                     <Grid item xs={12}>
                         <TextField
                             fullWidth
-                            label="Mobile"
+                            label="Dependent Mobile"
                             name="mobile"
                             type="tel"
                             value={dependent.mobile}
@@ -148,7 +148,7 @@ const CreateDependent = () => {
                     <Grid item xs={12}>
                         <TextField
                             fullWidth
-                            label="Father"
+                            label="Depende's  Father"
                             name="father"
                             value={dependent.father}
                             onChange={handleInputChange}
@@ -160,7 +160,7 @@ const CreateDependent = () => {
                         <TextField
                             select
                             fullWidth
-                            label="Relationship"
+                            label="Relationship With Member"
                             name="relationship"
                             value={dependent.relationship}
                             onChange={handleInputChange}
@@ -193,7 +193,7 @@ const CreateDependent = () => {
                         <TextField
                             select
                             fullWidth
-                            label="Blood Group"
+                            label="Dependent's Blood Group"
                             name="blood_group"
                             value={dependent.blood_group}
                             onChange={handleInputChange}
